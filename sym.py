@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 as cv
+from datetime import datetime
 
 # Initiliaze symmetry mode to 0
 mode = 0
@@ -65,6 +66,11 @@ while True:
 
         if mode >= 3:
             mode = 0
+    elif wait == ord('p'):
+        time = datetime.now().isoformat(sep='_').replace('.', '-').replace(':', '-')
+        filename = '{}_m{}.jpg'.format(time, mode)
+        print(filename)
+        cv.imwrite(filename, output)
 
 # When everything done, release the capture
 cap.release()

@@ -18,3 +18,4 @@ This project experiments with various realtime symmetry techniques using the ope
 5. Controls
 - - Hit 'q' to close the camera window
 - - Hit 'm' to cycle through the symmetry modes
+- - Hit 'p' to save the current frame to a file
