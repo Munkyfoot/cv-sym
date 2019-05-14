@@ -1,6 +1,10 @@
 import numpy as np
 import cv2 as cv
+
+division = False
+
 cap = cv.VideoCapture(0)
+
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
@@ -19,16 +23,29 @@ while True:
     frame_flipped_x = np.flip(frame, 1)
     frame_flipped_xy = np.flip(frame_flipped_y, 1)
 
-    output = np.zeros((height * 2, width * 2, channels), 'uint8')
-    output[0:height, 0:width, :] = frame[:, :, :]
-    output[height:height * 2, 0:width, :] = frame_flipped_y[:, :, :]
-    output[0:height, width:width*2, :] = frame_flipped_x[:, :, :]
-    output[height:height * 2, width:width*2, :] = frame_flipped_xy[:, :, :]
+    output = None
+
+    if division: 
+        output = np.zeros_like(frame)
+        output[0:height // 2, 0:width // 2, :] = frame[:height // 2, :width // 2, :]
+        output[height // 2:, 0:width // 2, :] = frame_flipped_y[height // 2:, :width // 2, :]
+        output[0:height // 2, width // 2:, :] = frame_flipped_x[:height // 2, width // 2:, :]
+        output[height // 2:, width // 2:, :] = frame_flipped_xy[height // 2:, width // 2:, :]
+    else:        
+        output = np.zeros((height * 2, width * 2, channels), 'uint8')
+        output[0:height, 0:width, :] = frame[:, :, :]
+        output[height:height * 2, 0:width, :] = frame_flipped_y[:, :, :]
+        output[0:height, width:width*2, :] = frame_flipped_x[:, :, :]
+        output[height:height * 2, width:width*2, :] = frame_flipped_xy[:, :, :]
+        output = cv.resize(output, (width, height), interpolation = cv.INTER_AREA)
 
     # Display the resulting frame
     cv.imshow('frame', output)
-    if cv.waitKey(1) == ord('q'):
+    wait = cv.waitKey(1)
+    if wait == ord('q'):
         break
+    elif wait == ord('d'):
+        division = not division
 # When everything done, release the capture
 cap.release()
 cv.destroyAllWindows()
